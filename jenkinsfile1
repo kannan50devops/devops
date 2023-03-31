@@ -1,0 +1,25 @@
+pipeline {
+    agent any
+    tools{
+        maven 'maven'
+    }
+    
+    stages{
+        stage('Build Maven'){
+            steps{
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'bbeafa80-f306-4949-b4ae-173402364185', url: 'https://github.com/kannan50devops/devops.git']])
+                sh 'mvn clean install'
+               
+            }
+        }
+    }
+        stage('Build docker image'){
+            steps{
+                script{
+                    sh 'docker build -t kannanbe50/kubernetes .'
+                }
+            }
+        }
+        
+    }
+}

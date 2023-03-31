@@ -20,6 +20,24 @@ pipeline {
                 }
             }
         }
-        
-    }
+       stage('Push image to hub'){
+            steps{
+                script{
+                    withCredentials([string(credentialsId: 'dockerhubpwd', variable: 'dockerhubpwd')]) {
+                    sh 'docker login -u kannanbe50 -p ${dockerhubpwd}'
+                        
+                    }
+                    sh 'docker push kannanbe50/kubernetes'
+                }
+            }
+        }
+        stage('Deploy to K8s'){
+            steps{
+                script{
+                    kubernetesDeploy (configs: 'deploymentservice.yaml',kubeconfigId: 'kubeconfig')
+                }
+            }
+        }
+    
+    }    
 }
